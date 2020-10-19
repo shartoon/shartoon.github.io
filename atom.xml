@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://shartoon.github.io</id>
+    <title>Gridea</title>
+    <updated>2020-10-19T07:06:29.083Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://shartoon.github.io"/>
+    <link rel="self" href="https://shartoon.github.io/atom.xml"/>
+    <subtitle>温故而知新</subtitle>
+    <logo>https://shartoon.github.io/images/avatar.png</logo>
+    <icon>https://shartoon.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2020, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[高阶函数]]></title>
+        <id>https://shartoon.github.io/post/gao-jie-han-shu/</id>
+        <link href="https://shartoon.github.io/post/gao-jie-han-shu/">
+        </link>
+        <updated>2020-10-19T02:58:38.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="什么是高阶函数">什么是高阶函数</h1>
+<p>高阶函数，就是把其他函数的函数名做为参数的函数。</p>
+<h1 id="如何自己写高阶函数">如何自己写高阶函数</h1>
+<p>可以自己写一个高阶函数，便于自己的理解。<br>
+例如，我们写一个<strong>把两个相同长度的列表中的元素一一对应进行四则运算</strong>的高阶函数，但提前我们并不写死用哪一种四则运算，而是调用一个抽象的函数名，之后调用的时候，再具体指定用哪一种运算。</p>
+<pre><code class="language-python"># 四则运算的函数，之后高阶函数会调用
+def Add(a, b):
+    return a + b
+def Minus(a, b):
+    return a - b
+def Multiply(a, b):
+    return a * b
+def Divide(a, b):
+    return a / b
+
+# 高阶函数，其中func就是抽象的函数名称
+def Merge(lx, ly, func):
+    lz = []
+    for i in range(len(lx)):
+        lz.append(func(lx[i], ly[i])) # 这里并没有指定用哪个运算函数
+    return lz
+
+# 高阶函数的使用
+lx = [1,2,3]
+ly = [4,5,6]
+lz = Merge(lx, ly, Add) # 直接把函数名 Add 做为参数进行传递
+print(lz) # output: [5,7,9]
+</code></pre>
+<h2 id="使用-lambda-表达式">使用 lambda 表达式</h2>
+<p>一般我们只想使用一种功能，例如使用加，我们就大可不必写减、乘、除的运算函数，而且“加运算”直接用 lambda 来写可以使代码变得十分简洁和优雅。</p>
+<pre><code class="language-python"># 直接写高阶函数
+def Merge(lx, ly, func):
+    lz = []
+    for i in range(len(lx)):
+        lz.append(func(lx[i], ly[i]))
+    return lz
+
+# 调用高阶函数，使用 lambda 表达式
+lx = [1,2,3]
+ly = [4,5,6]
+lz = Merge(lx, ly, lambda x,y : x+y) # 直接把函数名 Add 做为参数进行传递
+print(lz) # output: [5,7,9]
+</code></pre>
+<h1 id="常见内置高阶函数">常见内置高阶函数</h1>
+<p>python里面内置了一些高阶函数，利用这些高阶函数，能够提升我们编程的效率，也让我们的代码变得更加简洁和优雅。<br>
+常见的内置高阶函数有：<code>map(), reduce(), filter(), sort(), sorted()</code></p>
+<h2 id="map">map()</h2>
+<p><code>map()</code>的作用是，把一个 iterable 的容器里面，每一个元素做相同的操作。<br>
+<code>map()</code>有两个参数：一个函数、一个序列（当然不一定是list，是tuple, set, str都可以，只要能迭代就可以）<br>
+1. 第一个参数是函数，这个函数只能有一个输入，并且需要有输出。在<code>map()</code>的规则是，这个函数的输入，应该是序列里的元素。<br>
+2. 第二个参数是所要处理的序列。<br>
+<code>map()</code>返回的是一个 iterable 的对象，这个对象通过<code>list(), set(), tuple()</code>等函数，就可以转变为相应的数据结构。</p>
+<pre><code class="language-python"># 我想计算整型列表中的每一个元素的平方
+x = [1,2,3]
+y = list(map(lambda i : i**2, x))
+print(y)
+</code></pre>
+<h2 id="reduce">reduce</h2>
+<p>使用这个函数，需要首先 <code>from functools import reduce</code><br>
+<code>reduce()</code>也是有两个参数：一个函数、一个 iterable 对象。与<code>map()</code>的区别在于，第一个函数参数应该有两个输入。<br>
+<code>reduce()</code>的运算规则是：<br>
+（1）先把 iterable 对象的前两个元素进行运算，输出一个元素<br>
+（2）把 iterable 对象的第三个元素，与第一步中输出的元素进行运算，再输出一个元素<br>
+（3）把 iterable 对象的第四个元素，与第二步中输出的元素进行运算，再输出一个元素<br>
+（4）以此，最终只剩下一个元素，这就是 reduce(减少)<br>
+<code>reduce()</code>经常被用于做：叠加、叠乘。</p>
+<pre><code class="language-python"># 我想计算 1,2,3,4,5 五个数的乘积
+from functools import reduce
+ans = reduce(lambda x,y : x*y, range(1,5))
+print(ans)
+</code></pre>
+<h2 id="filter">filter</h2>
+<p>顾名思义，<code>filter()</code>的作用是过滤，滤掉那些不满足条件的。<br>
+<code>filter()</code>也有两个参数：一个函数、一个 iterable 对象。函数用于提供过滤条件，因此返回值应该是一个 Boolean 值</p>
+<pre><code class="language-python"># 例如，我想过滤掉 1-100 中的奇数，只留下偶数
+```python
+ans = list(filter(lambda x : x%2==0, range(1,101)))
+print(ans)
+</code></pre>
+<h2 id="listsort-sorted">list.sort() / sorted()</h2>
+<p><code>list.sort()</code> 与 <code>sorted()</code> 的区别在于：<br>
+（1）<code>sorted</code>可以对所有可迭代对象进行排序操作，而<code>list.sort()</code>只能排序list<br>
+（2）<code>sorted()</code>返回的是一个新的<strong>list</strong>，而<code>list.sort()</code>是在原有的list基础上进行操作<br>
+我们一般使用<code>sorted()/list.sort()</code>都不会传入函数，但是其实<code>sorted()/list.sort()</code>也是一个高阶函数。<br>
+<code>sorted()</code>有三个参数：<code>sorted(iterable, key=None, reverse=False)</code><br>
+（1）iterable 为可迭代对象<br>
+（2）key 为比较方法<br>
+（3）reverse 为是否降序（True为降序排序）<br>
+<code>list.sort()</code>有两个参数：<code>list.sort(key=None, reverse=False)</code><br>
+（1）key 为比较方法<br>
+（2）reverse 为是否降序（True为降序排序）</p>
+<pre><code class="language-python">x = [{&quot;age&quot;:20,&quot;name&quot;:&quot;a&quot;},{&quot;age&quot;:25,&quot;name&quot;:&quot;b&quot;},{&quot;age&quot;:10,&quot;name&quot;:&quot;c&quot;}]
+# 用 sorted()
+y = sorted(x, key=lambda i : i[&quot;age&quot;], reverse=True)
+
+# 用 list.sorted()
+x.sort(key=lambda i : i[&quot;age&quot;], reverse=True)
+print(x)
+</code></pre>
+]]></content>
+    </entry>
+</feed>
